@@ -46,12 +46,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 
-//             tabs.forEach((item, i) => {
-//             item.addEventListener('click', () => {
-//                     hideTabsContent();
-//                     showTabContent(i);
-//             });
-//         });
+            tabs.forEach((item, i) => {
+            item.addEventListener('click', () => {
+                    hideTabsContent();
+                    showTabContent(i);
+            });
+        });
 
 //  TIMER
 
