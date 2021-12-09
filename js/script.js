@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-//hello sadsfdfsdg` 
+    
 //   TABS
 
     const tabs = document.querySelectorAll('.tabheader__item'),
