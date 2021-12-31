@@ -110,96 +110,95 @@ document.addEventListener('DOMContentLoaded', () => {
     setClock('.timer', deadline);
 
 
-// MODAL WINDOW 
+    // MODAL WINDOW 
 
-const modal = document.querySelector('.modal');
-const btnsOn = document.querySelectorAll('[data-modal]');
-const btnOff = document.querySelector('[data-close]');
-const body = document.querySelector('body');
-
-
-
-function modalOn() {
-
-    modal.classList.add('show');
-    modal.classList.remove('hide');
-    // modal.classList.toggle('hide');
-    body.style.overflow = 'hidden';
-    clearInterval(timer);
-
-}
-
-function modalOff() {
-
-    modal.classList.add('hide');
-    modal.classList.remove('show');
-    body.style.overflow = '';
-
-}
+    const modal = document.querySelector('.modal');
+    const btnsOn = document.querySelectorAll('[data-modal]');
+    const btnOff = document.querySelector('[data-close]');
+    const body = document.querySelector('body');
 
 
-btnsOn.forEach(item => {
-    item.addEventListener('click', modalOn);
-});
 
-btnOff.addEventListener('click', modalOff);
+    function modalOn() {
 
-modal.addEventListener('click', (e) => { // убрать окно нажав мимо него
-
-    if (e.target === modal) {
-
-        modalOff();
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        // modal.classList.toggle('hide');
+        body.style.overflow = 'hidden';
+        clearInterval(timer);
 
     }
-});
 
-document.addEventListener('keydown', (e) => { // убрать нажав Esc (keydown)
+    function modalOff() {
 
-    if (e.code === 'Escape' && modal.classList.contains('show')) { // e.code для обозначения конкретной клавиши
-
-        modalOff();
+        modal.classList.add('hide');
+        modal.classList.remove('show');
+        body.style.overflow = '';
 
     }
-});
 
-const timer = setTimeout(modalOn, 5000); // открыть модальное окно через 5 сек
 
-window.addEventListener('scroll', showModalByScroll);
+    btnsOn.forEach(item => {
+        item.addEventListener('click', modalOn);
+    });
 
-function showModalByScroll() {
-    if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
-        modalOn();
-        window.removeEventListener('scroll', showModalByScroll);
+    btnOff.addEventListener('click', modalOff);
+
+    modal.addEventListener('click', (e) => { // убрать окно нажав мимо него
+
+        if (e.target === modal) {
+
+            modalOff();
+
+        }
+    });
+
+    document.addEventListener('keydown', (e) => { // убрать нажав Esc (keydown)
+
+        if (e.code === 'Escape' && modal.classList.contains('show')) { // e.code для обозначения конкретной клавиши
+
+            modalOff();
+
+        }
+    });
+
+    const timer = setTimeout(modalOn, 5000); // открыть модальное окно через 5 сек
+
+    window.addEventListener('scroll', showModalByScroll);
+
+    function showModalByScroll() {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+            modalOn();
+            window.removeEventListener('scroll', showModalByScroll);
+        }
     }
-}
 
-// CLASSES
+    // CLASSES
 
-class Menu {
-    constructor(src, alt, parentSelector, title, descr, price, ...classes){
-        this.src = src;
-        this.alt = alt;
-        this.parent = document.querySelector(parentSelector);
-        this.title = title;
-        this.descr = descr;
-        this.price = price;
-        this.classes = classes;
-        this.transfer = 27;
-        this.changeToUah();
-    }
-changeToUah() {
-    this.price = this.price*this.transfer;
-}
-render() {
-    const element = document.createElement('div');
-    if(this.classes.length === 0){
-        this.element = 'menu__item';
-        element.classList.add(this.element);
-    }
-    else{
-        this.classes.forEach(className => element.classList.add(className));
-    }
-    element.innerHTML = `
+    class Menu {
+        constructor(src, alt, parentSelector, title, descr, price, ...classes) {
+            this.src = src;
+            this.alt = alt;
+            this.parent = document.querySelector(parentSelector);
+            this.title = title;
+            this.descr = descr;
+            this.price = price;
+            this.classes = classes;
+            this.transfer = 27;
+            this.changeToUah();
+        }
+        changeToUah() {
+            this.price = this.price * this.transfer;
+        }
+        render() {
+            const element = document.createElement('div');
+            if (this.classes.length === 0) {
+                this.element = 'menu__item';
+                element.classList.add(this.element);
+            } else {
+                this.classes.forEach(className => element.classList.add(className));
+            }
+            element.innerHTML = `
     <img src="${this.src}" alt="${this.alt}">
     <h3 class="menu__item-subtitle">${this.title}</h3>
     <div class="menu__item-descr">${this.descr}</div>
@@ -209,26 +208,19 @@ render() {
         <div class="menu__item-total"><span class="menu__item-pricenum">${this.price}</span> грн/день</div>
     </div>
     `;
-    this.parent.append(element); 
-}
-}
+            this.parent.append(element);
+        }
+    }
 
-// удобно не создавать отдельную переменную чисто для оглашения метода одинарно 
+    // удобно не создавать отдельную переменную чисто для оглашения метода одинарно 
 
-new Menu("img/tabs/vegy.jpg", "vegy", ".menu .container", 'Меню "Фитнес"', "Меню “Фитнес” - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!", 10).render();             //класса menu__item нету   
-                                                                                             
-new Menu("img/tabs/elite.jpg", "elite", ".menu .container", 'Меню "Премиум"', "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!", 20, 'menu__item').render();     
+    new Menu("img/tabs/vegy.jpg", "vegy", ".menu .container", 'Меню "Фитнес"', "Меню “Фитнес” - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!", 10).render(); //класса menu__item нету   
 
-new Menu("img/tabs/post.jpg", "post", ".menu .container", 'Меню "Постное"', "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.", 15, 'menu__item').render();     
+    new Menu("img/tabs/elite.jpg", "elite", ".menu .container", 'Меню "Премиум"', "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!", 20, 'menu__item').render();
+
+    new Menu("img/tabs/post.jpg", "post", ".menu .container", 'Меню "Постное"', "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.", 15, 'menu__item').render();
 
 
 
 
 });
-
-
-
-
-
-
-
