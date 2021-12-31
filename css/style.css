@@ -28,6 +28,9 @@ animation-duration: 0.7s;
         opacity: 1;
     }
 }
+.logo {
+    margin-left: -40px;
+}
 .btn {
     width: 220px;
     height: 65px;

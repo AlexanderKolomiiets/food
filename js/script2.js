@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             seconds = Math.floor((t / 1000) % 60);
 
         return {
-            'total': t, 
+            'total': t,
             'days': days,
             'hours': hours,
             'minutes': minutes,
@@ -83,5 +83,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setClock('.timer', deadline);
 
+    const buttonModalOn = document.querySelectorAll('[data-modal]');
+    const buttonModalOff = document.querySelector('[data-close]');
+    const modalWindow = document.querySelector('.modal');
+    const body = document.querySelector('body');
 
+
+    function on() {
+        modalWindow.classList.add('show', 'fade');
+        modalWindow.classList.remove('hide');
+        body.style.overflow = 'hidden';
+clearInterval(interval);
+    }
+
+    function off() {
+        modalWindow.classList.remove('show', 'fade');
+        modalWindow.classList.add('hide');
+        body.style.overflow = '';
+    }
+
+buttonModalOn.forEach(item => {
+    item.addEventListener('click', on);
+    });
+
+buttonModalOff.addEventListener('click', off);
+
+let interval = setInterval(on, 5000);
+
+document.addEventListener('click', (e) => {
+if(e.target === modalWindow ){
+    off();
+}
+});
+
+document.addEventListener('keydown', (e) => {
+    if(e.code === 'Escape' || modalWindow.contains.classList('show')){
+        off();
+    }
+    });
 });
