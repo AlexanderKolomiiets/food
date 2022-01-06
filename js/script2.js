@@ -1,171 +1,162 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const tabsContainer = document.querySelector('.tabheader__items');
-    const tabs = document.querySelectorAll('.tabheader__item');
-    const tabsContent = document.querySelectorAll('.tabcontent');
+    const tabContent = document.querySelectorAll('.tabcontent'),
+        tabs = document.querySelectorAll('.tabheader__item');
 
     function hideContent() {
-        tabs.forEach(item => {
-            item.classList.remove('tabheader__item_active');
+        tabContent.forEach(content => {
+            content.classList.remove('show', 'fade');
+            content.classList.add('hide');
         });
-        tabsContent.forEach(item => {
-            item.classList.add('hide');
-            item.classList.remove('show', 'fade');
+
+        tabs.forEach(tab => {
+            tab.classList.remove('tabheader__item_active');
         });
     }
 
     function showContent(i = 0) {
-        tabsContent[i].classList.add('show', 'fade');
-        tabsContent[i].classList.remove('hide');
+        tabContent[i].classList.add('show', 'fade');
+        tabContent[i].classList.remove('hide');
         tabs[i].classList.add('tabheader__item_active');
     }
+
 
     hideContent();
     showContent();
 
-    tabs.forEach((item, i) => {
-        item.addEventListener('click', () => {
+
+    tabs.forEach((tab, i) => {
+        tab.addEventListener('click', () => {
             hideContent();
             showContent(i);
         });
     });
 
-
     const deadline = '2022-02-10';
 
-    function getTimeRemaining(endline) {
-        const t = Date.parse(endline) - Date.parse(new Date()),
+    function getTime(endtime) {
+        const t = Date.parse(endtime) - Date.parse(new Date()),
             days = Math.floor(t / 1000 / 60 / 60 / 24),
             hours = Math.floor((t / 1000 / 60 / 60) % 24),
             minutes = Math.floor((t / 1000 / 60) % 60),
             seconds = Math.floor((t / 1000) % 60);
 
         return {
-            'total': t,
-            'days': days,
-            'hours': hours,
-            'minutes': minutes,
-            'seconds': seconds
+            t,
+            days,
+            hours,
+            minutes,
+            seconds
         };
     }
 
-    function zero(num) {
-        if (num >= 0 && num < 10) {
-            return `0${num}`;
-        } else {
-            return num;
-        }
 
-    }
-
-    function setClock(selector, endline) {
+    function setClock(endtime, selector) {
         const timer = document.querySelector(selector),
             days = timer.querySelector('#days'),
             hours = timer.querySelector('#hours'),
             minutes = timer.querySelector('#minutes'),
-            seconds = timer.querySelector('#seconds'),
-            interval = setInterval(updateClock, 1000);
+            seconds = timer.querySelector('#seconds');
+        const interval = setInterval(updateClock, 1000);
 
         updateClock();
 
         function updateClock() {
-            const t = getTimeRemaining(endline);
-            days.innerHTML = zero(t.days);
-            hours.innerHTML = zero(t.hours);
-            minutes.innerHTML = zero(t.minutes);
-            seconds.innerHTML = zero(t.seconds);
-            if (t.total <= 0) {
+            const t = getTime(endtime);
+            days.innerHTML = t.days;
+            hours.innerHTML = t.hours;
+            minutes.innerHTML = t.minutes;
+            seconds.innerHTML = t.seconds;
+            if (t <= 0) {
                 clearInterval(interval);
             }
         }
 
     }
 
-    setClock('.timer', deadline);
+    setClock(deadline, '.timer');
 
-    const buttonModalOn = document.querySelectorAll('[data-modal]');
-    const buttonModalOff = document.querySelector('[data-close]');
-    const modalWindow = document.querySelector('.modal');
-    const body = document.querySelector('body');
+    const buttonOn = document.querySelectorAll('[data-modal]'),
+        buttonOff = document.querySelector('[data-close]'),
+        modalWindow = document.querySelector('.modal');
 
-
-    function on() {
+    function modalOn() {
         modalWindow.classList.add('show', 'fade');
         modalWindow.classList.remove('hide');
-        body.style.overflow = 'hidden';
-        clearInterval(interval);
     }
 
-    function off() {
+    function modalOff() {
         modalWindow.classList.remove('show', 'fade');
         modalWindow.classList.add('hide');
-        body.style.overflow = '';
     }
 
-    buttonModalOn.forEach(item => {
-        item.addEventListener('click', on);
+    buttonOn.forEach(item => {
+        item.addEventListener('click', modalOn);
     });
 
-    buttonModalOff.addEventListener('click', off);
+    buttonOff.addEventListener('click', modalOff);
 
-    let interval = setInterval(on, 5000);
-
-    document.addEventListener('click', (e) => {
+    window.addEventListener('click', (e) => {
         if (e.target === modalWindow) {
-            off();
+            modalOff();
         }
     });
 
-    document.addEventListener('keydown', (e) => {
-        if (e.code === 'Escape' || modalWindow.contains.classList('show')) {
-            off();
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Escape') {
+            modalOff();
         }
     });
 
-    class Menu {
-        constructor(src, alt, parent, title, descr, price, ...classes) {
-            this.src = src;
-            this.alt = alt;
-            this.parent = document.querySelector(parent);
-            this.title = title;
-            this.descr = descr;
-            this.price = price;
-            this.classes = classes;
-            this.transfer = 27;
-            this.convert();
-        }
-        convert() {
-            this.price *= this.transfer;
-        }
-        render() {
-            const element = document.createElement('div');
-            if (this.classes.length === 0) {
-                this.element = 'menu__item';
-                element.classList.add(this.element);
-            } else {
-                this.classes.forEach(className => element.classList.add(className));
-            }
-            element.innerHTML = `
-        <img src="${this.src}" alt="${this.alt}">
-        <h3 class="menu__item-subtitle">${this.title}</h3>
-        <div class="menu__item-descr">${this.descr}</div>
-        <div class="menu__item-divider"></div>
-        <div class="menu__item-price">
-            <div class="menu__item-cost">Цена:</div>
-            <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
-        </div>
-        `;
-            this.parent.append(element);
-        }
+class MenuCard {
+    constructor(src, alt, name, descr, price, parentSelector, ...classes){
+        this.src = src;
+        this.alt = alt;
+        this.name = name;
+        this.descr = descr;
+        this.price = price;
+        this.parentSelector = document.querySelector(parentSelector);
+        this.transfer = 27;
+        this.classes = classes;
+        this.convertToUAH();
     }
 
-    new Menu("img/tabs/vegy.jpg", "vegy", ".menu .container", 'Меню "Фитнес"', "Меню “Фитнес” - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!", 10).render(); //класса menu__item нету   
+convertToUAH(){
+this.price *= this.transfer;
+}
 
-    new Menu("img/tabs/elite.jpg", "elite", ".menu .container", 'Меню "Премиум"', "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!", 20, 'menu__item').render();
+render(){
 
-    new Menu("img/tabs/post.jpg", "post", ".menu .container", 'Меню "Постное"', "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.", 15, 'menu__item').render();
+    const element = document.createElement('div');
+    if(this.classes.length === 0){
+        this.element = 'menu__item';
+        element.classList.add(this.element);
+    } else{
+        this.classes.forEach(item => {
+element.classList.add(item);
+        });
+    }
+    element.innerHTML = `
+    <img src="${this.src}" alt="${this.alt}">
+    <h3 class="menu__item-subtitle">${this.name}</h3>
+    <div class="menu__item-descr">${this.descr}</div>
+    <div class="menu__item-divider"></div>
+    <div class="menu__item-price">
+        <div class="menu__item-cost">Цена:</div>
+        <div class="menu__item-total"><span class="menu__item-pricenum">${this.price}</span> грн/день</div>
+    </div>
+    `;
+    this.parentSelector.append(element);
+}
+
+} 
 
 
+new MenuCard("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', "Меню “Фитнес” - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!", 10, ".menu .container").render(); //класса menu__item нету   
+
+new MenuCard("img/tabs/elite.jpg", "elite", 'Меню "Премиум"', "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!", 20, ".menu .container", 'menu__item').render();
+
+new MenuCard("img/tabs/post.jpg", "post", 'Меню "Постное"', "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.", 15, ".menu .container", 'menu__item').render();
 
 
 
