@@ -231,11 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         failure: 'Что-то пошло не так...'
     };
 
-    forms.forEach(item => {
-        postData(item);
-    });
-
-    function postData(form) {
+    forms.forEach(form => {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -252,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(form);
 
             const obj = {};
-            formData.forEach(function(value, key) {
+            formData.forEach((value, key) => {
                obj[key] = value; 
             });
 
@@ -276,8 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
             form.reset();
 
         });
-
-    }
+        });
 
 
 });

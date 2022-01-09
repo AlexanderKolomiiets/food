@@ -108,35 +108,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-class MenuCard {
-    constructor(src, alt, name, descr, price, parentSelector, ...classes){
-        this.src = src;
-        this.alt = alt;
-        this.name = name;
-        this.descr = descr;
-        this.price = price;
-        this.parentSelector = document.querySelector(parentSelector);
-        this.transfer = 27;
-        this.classes = classes;
-        this.convertToUAH();
-    }
+    class MenuCard {
+        constructor(src, alt, name, descr, price, parentSelector, ...classes) {
+            this.src = src;
+            this.alt = alt;
+            this.name = name;
+            this.descr = descr;
+            this.price = price;
+            this.parentSelector = document.querySelector(parentSelector);
+            this.transfer = 27;
+            this.classes = classes;
+            this.convertToUAH();
+        }
 
-convertToUAH(){
-this.price *= this.transfer;
-}
+        convertToUAH() {
+            this.price *= this.transfer;
+        }
 
-render(){
+        render() {
 
-    const element = document.createElement('div');
-    if(this.classes.length === 0){
-        this.element = 'menu__item';
-        element.classList.add(this.element);
-    } else{
-        this.classes.forEach(item => {
-element.classList.add(item);
-        });
-    }
-    element.innerHTML = `
+            const element = document.createElement('div');
+            if (this.classes.length === 0) {
+                this.element = 'menu__item';
+                element.classList.add(this.element);
+            } else {
+                this.classes.forEach(item => {
+                    element.classList.add(item);
+                });
+            }
+            element.innerHTML = `
     <img src="${this.src}" alt="${this.alt}">
     <h3 class="menu__item-subtitle">${this.name}</h3>
     <div class="menu__item-descr">${this.descr}</div>
@@ -146,19 +146,63 @@ element.classList.add(item);
         <div class="menu__item-total"><span class="menu__item-pricenum">${this.price}</span> грн/день</div>
     </div>
     `;
-    this.parentSelector.append(element);
-}
+            this.parentSelector.append(element);
+        }
 
-} 
-
-
-new MenuCard("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', "Меню “Фитнес” - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!", 10, ".menu .container").render(); //класса menu__item нету   
-
-new MenuCard("img/tabs/elite.jpg", "elite", 'Меню "Премиум"', "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!", 20, ".menu .container", 'menu__item').render();
-
-new MenuCard("img/tabs/post.jpg", "post", 'Меню "Постное"', "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.", 15, ".menu .container", 'menu__item').render();
+    }
 
 
+    new MenuCard("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', "Меню “Фитнес” - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!", 10, ".menu .container").render(); //класса menu__item нету   
 
+    new MenuCard("img/tabs/elite.jpg", "elite", 'Меню "Премиум"', "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!", 20, ".menu .container", 'menu__item').render();
+
+    new MenuCard("img/tabs/post.jpg", "post", 'Меню "Постное"', "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.", 15, ".menu .container", 'menu__item').render();
+
+    const forms = document.querySelectorAll('form');
+
+    const messageResponse = {
+        loading: 'loading...',
+        success: 'OK',
+        failure: 'Something goes wrong...'
+    };
+
+    forms.forEach(form => {
+        form.addEventListener('submit', (e) => {
+
+            e.preventDefault();
+
+            const element = document.createElement('div');
+            element.classList.add('status');
+            element.textContent = messageResponse.loading;
+            form.append(element);
+
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+
+            const formData = new FormData(form);
+            const obj = {};
+            formData.forEach((data, i) => {
+                obj[i] = data;
+            });
+
+            const json = JSON.stringify(obj);
+
+            request.send(json);
+
+
+            request.addEventListener('load', () => {
+                console.log(request.response);
+                if (request.status === 200) {
+                    element.textContent = messageResponse.success;
+                } else {
+                    element.textContent = messageResponse.failure;
+                }
+            });
+
+            form.reset();
+
+        });
+
+    });
 
 });
