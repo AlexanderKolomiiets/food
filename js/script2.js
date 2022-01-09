@@ -197,6 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     element.textContent = messageResponse.failure;
                 }
+                setTimeout(() => {
+                    element.remove();
+                }, 2000);
             });
 
             form.reset();
