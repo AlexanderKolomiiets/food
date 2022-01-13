@@ -77,27 +77,28 @@ document.addEventListener('DOMContentLoaded', () => {
     setClock(deadline, '.timer');
 
     const buttonOn = document.querySelectorAll('[data-modal]'),
-        buttonOff = document.querySelector('[data-close]'),
+    body = document.querySelector('body'),
         modalWindow = document.querySelector('.modal');
 
     function modalOn() {
         modalWindow.classList.add('show', 'fade');
         modalWindow.classList.remove('hide');
+        body.style.overflow = 'hidden';
+        clearTimeout(timeoutModal);
     }
 
     function modalOff() {
         modalWindow.classList.remove('show', 'fade');
         modalWindow.classList.add('hide');
+        body.style.overflow = '';
     }
 
     buttonOn.forEach(item => {
         item.addEventListener('click', modalOn);
     });
 
-    buttonOff.addEventListener('click', modalOff);
-
     window.addEventListener('click', (e) => {
-        if (e.target === modalWindow) {
+        if (e.target === modalWindow || e.target.getAttribute('data-close') == '') {
             modalOff();
         }
     });
@@ -107,6 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
             modalOff();
         }
     });
+
+    const timeoutModal = setTimeout(() => {
+        modalOn();
+    }, 15000);
+
 
     class MenuCard {
         constructor(src, alt, name, descr, price, parentSelector, ...classes) {
@@ -161,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const forms = document.querySelectorAll('form');
 
     const messageResponse = {
-        loading: 'loading...',
+        loading: '/icons/spinner.svg',
         success: 'OK',
         failure: 'Something goes wrong...'
     };
@@ -171,10 +177,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             e.preventDefault();
 
-            const element = document.createElement('div');
-            element.classList.add('status');
-            element.textContent = messageResponse.loading;
-            form.append(element);
+            const element = document.createElement('img');
+            element.src = messageResponse.loading;
+            element.style.cssText = `
+            margin: 0 auto;
+            display: block;
+            `;
+            
+            form.insertAdjacentElement('afterend', element);
 
             const request = new XMLHttpRequest();
             request.open('POST', 'server.php');
@@ -193,19 +203,57 @@ document.addEventListener('DOMContentLoaded', () => {
             request.addEventListener('load', () => {
                 console.log(request.response);
                 if (request.status === 200) {
-                    element.textContent = messageResponse.success;
+                    thanksModal(messageResponse.success);
                 } else {
-                    element.textContent = messageResponse.failure;
+                    thanksModal(messageResponse.failure);
                 }
-                setTimeout(() => {
-                    element.remove();
-                }, 2000);
             });
 
+            element.remove();
             form.reset();
 
         });
 
     });
+
+    function thanksModal(message) {
+
+        const prevModal = document.querySelector('.modal__dialog');
+        prevModal.classList.add('hide');
+
+
+        const currentModal = document.createElement('div');
+        currentModal.classList.add('modal__dialog');
+        currentModal.innerHTML = `
+        <div class="modal__content">
+                <form action="#">
+                    <div data-close class="modal__close">&times;</div>
+                    <div class="modal__title">${message}</div>
+                </form>
+            </div>
+        `;
+        
+        modalWindow.append(currentModal);
+
+        modalOn();
+
+    
+        function thanksModalClose(){
+            prevModal.classList.remove('hide');
+            currentModal.remove();
+            modalOff();
+        }
+
+        modalWindow.addEventListener('click', (e) => {
+            if(e.target === modalWindow || e.target.getAttribute('data-close') == ''){
+            thanksModalClose();
+            clearTimeout(timeoutThanks);
+            }
+        });
+
+       const timeoutThanks = setTimeout(thanksModalClose, 2000);
+
+    }
+
 
 });
