@@ -186,9 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             form.insertAdjacentElement('afterend', element);
 
-            const request = new XMLHttpRequest();
-            request.open('POST', 'server.php');
-
             const formData = new FormData(form);
             const obj = {};
             formData.forEach((data, i) => {
@@ -197,20 +194,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const json = JSON.stringify(obj);
 
-            request.send(json);
+            // const request = new XMLHttpRequest();
+            // request.open('POST', 'server.php');
+            // request.send(json);
 
+            // request.addEventListener('load', () => {
+            //     console.log(request.response);
+            //     if (request.status === 200) {
+            //         thanksModal(messageResponse.success);
+            //     } else {
+            //         thanksModal(messageResponse.failure);
+            //     }
+            // });
 
-            request.addEventListener('load', () => {
-                console.log(request.response);
-                if (request.status === 200) {
-                    thanksModal(messageResponse.success);
-                } else {
-                    thanksModal(messageResponse.failure);
-                }
+            // element.remove();
+            // form.reset();
+
+            fetch('server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-type' : 'application/json'
+                },
+                body: json
+            }).then(data => data.text())
+            .then(data => {
+                console.log(data);
+                thanksModal(messageResponse.success);
+            }).catch(() => {
+                thanksModal(messageResponse.failure);
+            }).finally(() => {
+                element.remove();
+                form.reset();
             });
 
-            element.remove();
-            form.reset();
+
 
         });
 

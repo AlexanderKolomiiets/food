@@ -242,13 +242,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // form.append(statusMessage);
             form.insertAdjacentElement('afterend', statusMessage);
 
-            const request = new XMLHttpRequest();
-
-            request.open('POST', 'server.php');
-            request.setRequestHeader('Content-type', 'application/json');
+            //  Запрос через XMLHttpRequest
 
             const formData = new FormData(form);
-
             const obj = {};
             formData.forEach((value, key) => {
                 obj[key] = value;
@@ -256,20 +252,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const json = JSON.stringify(obj);
 
-            request.send(json);
+            // const request = new XMLHttpRequest();
 
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(request.response);
-                    thanksModal(message.success);
-                    form.reset();
-                    statusMessage.remove();
-                } else {
-                    thanksModal(message.failure);
-                    form.reset();
-                    statusMessage.remove();
-                }
+            // request.open('POST', 'server.php');
+            // request.setRequestHeader('Content-type', 'application/json');
+            // request.send(json);
 
+            // request.addEventListener('load', () => {
+            //     if (request.status === 200) {
+            //         console.log(request.response);
+            //         thanksModal(message.success);
+            //     } else {
+            //         thanksModal(message.failure);
+            //     }
+            // });
+            //         form.reset();
+            //         statusMessage.remove();
+
+            //   Запрос через Fetch API
+
+            fetch('server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: json
+            }).then(data => data.text())
+              .then(data => {
+                console.log(data);
+                thanksModal(message.success);
+            }).catch(() => {
+                thanksModal(message.failure);
+            }).finally(() => {
+                form.reset();
+                statusMessage.remove();
             });
 
 
