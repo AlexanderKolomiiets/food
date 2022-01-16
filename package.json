@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/AlexanderKolomiiets/food-project/issues"
   },
-  "homepage": "https://github.com/AlexanderKolomiiets/food-project#readme"
+  "homepage": "https://github.com/AlexanderKolomiiets/food-project#readme",
+  "devDependencies": {
+    "json-server": "^0.17.0"
+  }
 }
