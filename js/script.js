@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(url);
     
             if(!res.ok){
-               throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+               throw new Error(console.log(`Could not fetch ${url}, status: ${res.status}`));
             }
     
             return await res.json();
@@ -252,6 +252,11 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             body: data
         });
+
+        if(!res.ok){
+            throw new Error(console.log(`Could not fetch ${url}, status: ${res.status}`));
+         }
+
         return await res.json();
     };
 
