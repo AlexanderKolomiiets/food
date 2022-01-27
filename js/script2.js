@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setClock(deadline, '.timer');
 
     const buttonOn = document.querySelectorAll('[data-modal]'),
-    body = document.querySelector('body'),
+        body = document.querySelector('body'),
         modalWindow = document.querySelector('.modal');
 
     function modalOn() {
@@ -115,10 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     class MenuCard {
-        constructor(src, alt, name, descr, price, parentSelector, ...classes) {
-            this.src = src;
-            this.alt = alt;
-            this.name = name;
+        constructor(img, altimg, title, descr, price, parentSelector, ...classes) {
+            this.img = img;
+            this.altimg = altimg;
+            this.title = title;
             this.descr = descr;
             this.price = price;
             this.parentSelector = document.querySelector(parentSelector);
@@ -143,8 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
             element.innerHTML = `
-    <img src="${this.src}" alt="${this.alt}">
-    <h3 class="menu__item-subtitle">${this.name}</h3>
+    <img src="${this.img}" alt="${this.altimg}">
+    <h3 class="menu__item-subtitle">${this.title}</h3>
     <div class="menu__item-descr">${this.descr}</div>
     <div class="menu__item-divider"></div>
     <div class="menu__item-price">
@@ -157,12 +157,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
+    const getResource = async (url) => {
+        const res = await fetch(url);
 
-    new MenuCard("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', "Меню “Фитнес” - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!", 10, ".menu .container").render(); //класса menu__item нету   
+        if (!res.ok) {
+            throw new Error(console.log('Error'));
+        }
+        return await res.json();
 
-    new MenuCard("img/tabs/elite.jpg", "elite", 'Меню "Премиум"', "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!", 20, ".menu .container", 'menu__item').render();
+    };
 
-    new MenuCard("img/tabs/post.jpg", "post", 'Меню "Постное"', "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.", 15, ".menu .container", 'menu__item').render();
+    getResource('http://localhost:3000/menu')
+        .then(data => {
+            data.forEach(({
+                img,
+                altimg,
+                title,
+                descr,
+                price,
+                parentSelector
+            }) => {
+                new MenuCard(img, altimg, title, descr, price, parentSelector).render();
+            });
+        });
 
     const forms = document.querySelectorAll('form');
 
@@ -172,6 +189,21 @@ document.addEventListener('DOMContentLoaded', () => {
         failure: 'Something goes wrong...'
     };
 
+    const request = async (url, data) => {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: data
+        });
+
+        if (!res.ok) {
+            throw new Error('Try again!');
+        }
+        return await res.json();
+    };
+
     forms.forEach(form => {
         form.addEventListener('submit', (e) => {
 
@@ -179,98 +211,185 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const element = document.createElement('img');
             element.src = messageResponse.loading;
-            element.style.cssText = `
+            element.cssText = `
             margin: 0 auto;
             display: block;
             `;
-            
             form.insertAdjacentElement('afterend', element);
 
-            const formData = new FormData(form);
-            const obj = {};
-            formData.forEach((data, i) => {
-                obj[i] = data;
-            });
+            const formdata = new FormData(form);
+            const json = JSON.stringify(Object.fromEntries(Object.entries(formdata)));
 
-            const json = JSON.stringify(obj);
-
-            // const request = new XMLHttpRequest();
-            // request.open('POST', 'server.php');
-            // request.send(json);
-
-            // request.addEventListener('load', () => {
-            //     console.log(request.response);
-            //     if (request.status === 200) {
-            //         thanksModal(messageResponse.success);
-            //     } else {
-            //         thanksModal(messageResponse.failure);
-            //     }
-            // });
-
-            // element.remove();
-            // form.reset();
-
-            fetch('server.php', {
-                method: 'POST',
-                headers: {
-                    'Content-type' : 'application/json'
-                },
-                body: json
-            }).then(data => data.text())
-            .then(data => {
-                console.log(data);
-                thanksModal(messageResponse.success);
-            }).catch(() => {
-                thanksModal(messageResponse.failure);
-            }).finally(() => {
-                element.remove();
-                form.reset();
-            });
-
-
-
+            request('http://localhost:3000/requests', json)
+                .then(() => {
+                    thanksModal(messageResponse.success);
+                }).catch(() => {
+                    thanksModal(messageResponse.failure);
+                }).finally(() => {
+                    element.remove();
+                    form.reset();
+                });
         });
-
     });
 
     function thanksModal(message) {
-
         const prevModal = document.querySelector('.modal__dialog');
         prevModal.classList.add('hide');
-
-
-        const currentModal = document.createElement('div');
-        currentModal.classList.add('modal__dialog');
-        currentModal.innerHTML = `
+        const newModal = document.createElement('div');
+        newModal.innerHTML = `
         <div class="modal__content">
-                <form action="#">
-                    <div data-close class="modal__close">&times;</div>
-                    <div class="modal__title">${message}</div>
-                </form>
-            </div>
+        <div data-close class="modal__close">&times;</div>
+        <div class="modal__title">${message}</div>
+        </div>
         `;
-        
-        modalWindow.append(currentModal);
+        newModal.classList.add('modal__dialog');
+        modalWindow.append(newModal);
 
         modalOn();
 
-    
-        function thanksModalClose(){
+        function closeThanksModal() {
             prevModal.classList.remove('hide');
-            currentModal.remove();
+            newModal.remove();
             modalOff();
         }
 
         modalWindow.addEventListener('click', (e) => {
-            if(e.target === modalWindow || e.target.getAttribute('data-close') == ''){
-            thanksModalClose();
-            clearTimeout(timeoutThanks);
+            if (e.target.getAttribute('data-close') == '' || e.target === modalWindow) {
+                closeThanksModal();
+                clearTimeout(timeoutModal);
             }
         });
 
-       const timeoutThanks = setTimeout(thanksModalClose, 2000);
+        const timeoutModal = setTimeout(() => {
+            closeThanksModal();
+        }, 4000);
 
     }
+
+
+
+    const slides = document.querySelectorAll('.offer__slide'),
+        prevSlide = document.querySelector('.offer__slider-prev'),
+        nextSlide = document.querySelector('.offer__slider-next'),
+        current = document.querySelector('#current'),
+        total = document.querySelector('#total'),
+        slideWrapper = document.querySelector('.offer__slider-wrapper'),
+        slideField = document.querySelector('.offer__slider-inner'),
+        width = window.getComputedStyle(slideWrapper).width;
+
+    let slideIndex = 1;
+    let offset = 0;
+
+    if (slides.length < 10) {
+        total.textContent = `0${slides.length}`;
+    } else {
+        total.textContent = slides.length;
+    }
+
+    showSlides();
+
+    function showSlides() {
+        if (slideIndex < 10) {
+            current.textContent = `0${slideIndex}`;
+        } else {
+            current.textContent = slideIndex;
+        }
+    }
+
+    function dotsOpacity() {
+        dots.forEach(dot => {
+            dot.style.opacity = '0.5';
+            dots[slideIndex - 1].style.opacity = 1;
+        });
+    }
+
+    function numerousWidth() {
+        return +width.replace(/\D/ig, '');
+    }
+
+    slideField.style.width = 100 * slides.length + '%';
+    slideField.style.display = 'flex';
+    slideField.style.transition = '0.5s all';
+
+    slideWrapper.style.overflow = 'hidden';
+    slideWrapper.style.position = 'relative';
+
+
+    slides.forEach(slide => {
+        slide.style.width = width;
+    });
+
+    const indicators = document.createElement('ol');
+    indicators.classList.add('carousel-indicators');
+    slideWrapper.append(indicators);
+
+    let dots = [];
+
+    for (let i = 0; i < slides.length; i++) {
+        const dot = document.createElement('li');
+        dot.setAttribute('dots-slide', i + 1);
+        dot.classList.add('dot');
+        if (i == 0) {
+            dot.style.opacity = 1;
+        }
+        indicators.append(dot);
+        dots.push(dot);
+    }
+
+    nextSlide.addEventListener('click', () => {
+        if (offset == numerousWidth() * (slides.length - 1)) {
+            offset = 0;
+        } else {
+            offset += numerousWidth();
+        }
+
+        slideField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex >= slides.length) {
+            slideIndex = 1;
+        } else {
+            slideIndex++;
+        }
+
+        showSlides();
+        dotsOpacity();
+
+    });
+
+    prevSlide.addEventListener('click', () => {
+        if (offset == 0) {
+            offset = numerousWidth() * (slides.length - 1);
+        } else {
+            offset -= numerousWidth();
+        }
+
+        slideField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex <= 1) {
+            slideIndex = slides.length;
+        } else {
+            slideIndex--;
+        }
+
+        showSlides();
+        dotsOpacity();
+
+    });
+
+    dots.forEach(dot => {
+        dot.addEventListener('click', (e) => {
+            let slideTo = e.target.getAttribute('dots-slide');
+            slideIndex = slideTo;
+            offset = numerousWidth() * (slideIndex - 1);
+
+            slideField.style.transform = `translateX(-${offset}px)`;
+
+            showSlides();
+            dotsOpacity();
+            
+        });
+    });
+
 
 
 });

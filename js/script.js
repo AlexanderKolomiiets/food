@@ -172,11 +172,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // CLASSES
-
     class Menu {
-        constructor(src, alt, parentSelector, title, descr, price, ...classes) {
-            this.src = src;
-            this.alt = alt;
+        constructor(img, altimg, title, descr, price, parentSelector, ...classes) {
+            this.img = img;
+            this.altimg = altimg;
             this.parent = document.querySelector(parentSelector);
             this.title = title;
             this.descr = descr;
@@ -197,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.classes.forEach(className => element.classList.add(className));
             }
             element.innerHTML = `
-    <img src="${this.src}" alt="${this.alt}">
+    <img src="${this.img}" alt="${this.altimg}">
     <h3 class="menu__item-subtitle">${this.title}</h3>
     <div class="menu__item-descr">${this.descr}</div>
     <div class="menu__item-divider"></div>
@@ -210,13 +209,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // удобно не создавать отдельную переменную чисто для оглашения метода одинарно 
+    // Создание GET-запроса для создания классов
+    const getResource = async (url) => {
+        const res = await fetch(url);
 
-    new Menu("img/tabs/vegy.jpg", "vegy", ".menu .container", 'Меню "Фитнес"', "Меню “Фитнес” - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!", 10).render(); //класса menu__item нету   
+        if (!res.ok) {
+            throw new Error(console.log(`Could not fetch ${url}, status: ${res.status}`));
+        }
 
-    new Menu("img/tabs/elite.jpg", "elite", ".menu .container", 'Меню "Премиум"', "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!", 20, 'menu__item').render();
+        return await res.json();
+    };
 
-    new Menu("img/tabs/post.jpg", "post", ".menu .container", 'Меню "Постное"', "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.", 15, 'menu__item').render();
+    getResource('http://localhost:3000/menu')
+        .then(data => {
+            data.forEach(({
+                img,
+                altimg,
+                title,
+                descr,
+                price,
+                parentSelector
+            }) => {
+                new Menu(img, altimg, title, descr, price, parentSelector).render();
+            });
+        });
+
+    // new Menu("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', "Меню “Фитнес” - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!", 10, ".menu .container").render(); //класса menu__item нету   
+
+    // new Menu("img/tabs/elite.jpg", "elite", 'Меню "Премиум"', "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!", 20, ".menu .container", 'menu__item').render();
+
+    // new Menu("img/tabs/post.jpg", "post", 'Меню "Постное"', "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.", 15, ".menu .container", 'menu__item').render();
 
 
     // ФОРМА ОТПРАВКИ ДАННЫХ
@@ -228,6 +250,23 @@ document.addEventListener('DOMContentLoaded', () => {
         success: 'Спасибо !',
         failure: 'Что-то пошло не так...'
     };
+
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: data
+        });
+
+        if (!res.ok) {
+            throw new Error(console.log(`Could not fetch ${url}, status: ${res.status}`));
+        }
+
+        return await res.json();
+    };
+
 
     forms.forEach(form => {
         form.addEventListener('submit', (e) => {
@@ -242,15 +281,34 @@ document.addEventListener('DOMContentLoaded', () => {
             // form.append(statusMessage);
             form.insertAdjacentElement('afterend', statusMessage);
 
-            //  Запрос через XMLHttpRequest
-
             const formData = new FormData(form);
-            const obj = {};
-            formData.forEach((value, key) => {
-                obj[key] = value;
-            });
 
-            const json = JSON.stringify(obj);
+            // 1 метод создания обьекта json
+
+            // const obj = {};
+            // formData.forEach((value, key) => {
+            //     obj[key] = value;
+            // });
+            // const json = JSON.stringify(obj);
+
+            // 2 метод создания обьекта json
+
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));
+
+            //   Запрос через Fetch API
+
+            postData('http://localhost:3000/requests', json)
+                .then(data => {
+                    console.log(data);
+                    thanksModal(message.success);
+                }).catch(() => {
+                    thanksModal(message.failure);
+                }).finally(() => {
+                    form.reset();
+                    statusMessage.remove();
+                });
+
+            //  Запрос через XMLHttpRequest
 
             // const request = new XMLHttpRequest();
 
@@ -269,25 +327,11 @@ document.addEventListener('DOMContentLoaded', () => {
             //         form.reset();
             //         statusMessage.remove();
 
-            //   Запрос через Fetch API
+            // npx json-server db.json
 
-            fetch('server.php', {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: json
-            }).then(data => data.text())
-              .then(data => {
-                console.log(data);
-                thanksModal(message.success);
-            }).catch(() => {
-                thanksModal(message.failure);
-            }).finally(() => {
-                form.reset();
-                statusMessage.remove();
-            });
-
+            // fetch('http://localhost:3000/menu')
+            // .then(data => data.text())
+            // .then(data => console.log(data));
 
         });
     });
@@ -329,5 +373,197 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
+    // Slider (1 вариант)
 
+    // const slides = document.querySelectorAll('.offer__slide'),
+    //     prevSlide = document.querySelector('.offer__slider-prev'),
+    //     nextSlide = document.querySelector('.offer__slider-next'),
+    //     current = document.querySelector('#current'),
+    //     total = document.querySelector('#total');
+
+
+    // let slideIndex = 1;
+
+    // showSlides(slideIndex);
+
+    // if (slides.length < 10) {
+    //     total.textContent = `0${slides.length}`;
+    // } else {
+    //     total.textContent = slides.length;
+    // }
+
+    // function showSlides(n) {
+    //     if (n > slides.length) {
+    //         slideIndex = 1;
+    //     }
+    //     if (n < 1) {
+    //         slideIndex = slides.length;
+    //     }
+
+    //     slides.forEach(slide => {
+    //         slide.style.display = 'none';
+    //     });
+
+    //     slides[slideIndex - 1].style.display = 'block';
+
+    //     if (slideIndex < 10) {
+    //         current.textContent = `0${slideIndex}`;
+    //     } else {
+    //         current.textContent = slideIndex;
+    //     }
+    // }
+
+    // function plusSlides(n) {
+    //     showSlides(slideIndex += n);
+    // }
+
+    // prevSlide.addEventListener('click', () => {
+    //     plusSlides(-1);
+    // });
+
+    // nextSlide.addEventListener('click', () => {
+    //     plusSlides(1);
+    // });
+
+    //  Slider (2 вариант)
+
+    const slides = document.querySelectorAll('.offer__slide'),
+        slider = document.querySelector('.offer__slider'),
+        prevSlide = document.querySelector('.offer__slider-prev'),
+        nextSlide = document.querySelector('.offer__slider-next'),
+        current = document.querySelector('#current'),
+        total = document.querySelector('#total'),
+        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+        slidesField = document.querySelector('.offer__slider-inner'),
+        width = window.getComputedStyle(slidesWrapper).width;
+
+    let slideIndex = 1;
+    let offset = 0;
+
+    if (slides.length < 10) {
+        total.textContent = `0${slides.length}`;
+    } else {
+        total.textContent = slides.length;
+    }
+
+    if (slideIndex < 10) {
+        current.textContent = `0${slideIndex}`;
+    } else {
+        current.textContent = slideIndex;
+    }
+
+    slidesField.style.width = 100 * slides.length + '%';
+    slidesField.style.display = 'flex';
+    slidesField.style.transition = '0.5s all';
+
+    slidesWrapper.style.overflow = 'hidden';
+
+    slides.forEach(slide => {
+        slide.style.width = width;
+    });
+
+    slidesWrapper.style.position = 'relative';
+
+    const indicators = document.createElement('ol');
+    const dots = []; 
+    indicators.classList.add('carousel-indicators');
+    slidesWrapper.append(indicators);
+
+    for (let i = 0; i < slides.length; i++){
+        const dot = document.createElement('li');
+        dot.setAttribute('data-slide-to', i + 1);
+        dot.classList.add('dot');
+        if (i == 0) {
+            dot.style.opacity = 1;
+        }
+        indicators.append(dot);
+        dots.push(dot);
+    }
+
+    nextSlide.addEventListener('click', () => {
+
+        if (offset === +width.replace(/\D/ig, '') * (slides.length - 1)) { //  width нужно обрезать из-за px в конце
+            offset = 0;
+        } else {
+            offset += +width.replace(/\D/ig, '');
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex == slides.length) {
+            slideIndex = 1;
+        } else {
+            slideIndex++;
+        }
+
+        if (slideIndex < 10) {
+            current.textContent = `0${slideIndex}`;
+        } else {
+            current.textContent = slideIndex;
+        }
+
+        dots.forEach(dot => {
+            dot.style.opacity = '0.5';
+            dots[slideIndex - 1].style.opacity = 1;
+        });
+    });
+
+    prevSlide.addEventListener('click', () => {
+
+        if (offset == 0) { //  width нужно обрезать из-за px в конце
+            offset = +width.replace(/\D/ig, '') * (slides.length - 1);
+        } else {
+            offset -= +width.replace(/\D/ig, '');
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex == 1) {
+            slideIndex = slides.length;
+        } else {
+            slideIndex--;
+        }
+
+        if (slideIndex < 10) {
+            current.textContent = `0${slideIndex}`;
+        } else {
+            current.textContent = slideIndex;
+        }
+
+        dots.forEach(dot => {
+            dot.style.opacity = '0.5';
+            dots[slideIndex - 1].style.opacity = 1;
+        });
+    });
+
+    dots.forEach(dot => {
+        dot.addEventListener('click', (e) => {
+            const slideTo = e.target.getAttribute('data-slide-to');
+
+            slideIndex = slideTo;
+            offset = +width.replace(/\D/ig, '') * (slideTo - 1);
+
+            slidesField.style.transform = `translateX(-${offset}px)`;
+
+            if (slideIndex < 10) {
+                current.textContent = `0${slideIndex}`;
+            } else {
+                current.textContent = slideIndex;
+            }
+
+            dots.forEach(dot => {
+                dot.style.opacity = '0.5';
+                dots[slideIndex - 1].style.opacity = 1;
+            });
+        });
+    });
 });
+
+
+
+
+
+
+
+
+
