@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setClock(deadline, '.timer');
 
     const buttonOn = document.querySelectorAll('[data-modal]'),
-    body = document.querySelector('body'),
+        body = document.querySelector('body'),
         modalWindow = document.querySelector('.modal');
 
     function modalOn() {
@@ -158,21 +158,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const getResource = async (url) => {
-    const res = await fetch(url);
+        const res = await fetch(url);
 
-    if(!res.ok){
-        throw new Error (console.log('Error'));
-    }
-    return await res.json();
+        if (!res.ok) {
+            throw new Error(console.log('Error'));
+        }
+        return await res.json();
 
     };
 
     getResource('http://localhost:3000/menu')
-    .then(data =>{
-     data.forEach(({img, altimg, title, descr, price, parentSelector}) => {
-     new MenuCard(img, altimg, title, descr, price, parentSelector).render();
-     });
-    });
+        .then(data => {
+            data.forEach(({
+                img,
+                altimg,
+                title,
+                descr,
+                price,
+                parentSelector
+            }) => {
+                new MenuCard(img, altimg, title, descr, price, parentSelector).render();
+            });
+        });
 
     const forms = document.querySelectorAll('form');
 
@@ -182,8 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         failure: 'Something goes wrong...'
     };
 
-
-    const postData = async (url, data) => {
+    const request = async (url, data) => {
         const res = await fetch(url, {
             method: 'POST',
             headers: {
@@ -192,10 +198,9 @@ document.addEventListener('DOMContentLoaded', () => {
             body: data
         });
 
-        if(!res.ok){
-            throw new Error (console.log('Error'));
+        if (!res.ok) {
+            throw new Error('Try again!');
         }
-
         return await res.json();
     };
 
@@ -206,83 +211,76 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const element = document.createElement('img');
             element.src = messageResponse.loading;
-            element.style.cssText = `
+            element.cssText = `
             margin: 0 auto;
             display: block;
             `;
-            
             form.insertAdjacentElement('afterend', element);
 
-            const formData = new FormData(form);
-          
-            const json = JSON.stringify(Object.fromEntries(formData.entries()));
+            const formdata = new FormData(form);
+            const json = JSON.stringify(Object.fromEntries(Object.entries(formdata)));
 
-            
-            postData('http://localhost:3000/requests', json)
-            .then(data => {
-                console.log(data);
-                thanksModal(messageResponse.success);
-            }).catch(() => {
-                thanksModal(messageResponse.failure);
-            }).finally(() => {
-                element.remove();
-                form.reset();
-            });
+            request('http://localhost:3000/requests', json)
+                .then(() => {
+                    thanksModal(messageResponse.success);
+                }).catch(() => {
+                    thanksModal(messageResponse.failure);
+                }).finally(() => {
+                    element.remove();
+                    form.reset();
+                });
         });
     });
 
     function thanksModal(message) {
-
         const prevModal = document.querySelector('.modal__dialog');
         prevModal.classList.add('hide');
-
-
-        const currentModal = document.createElement('div');
-        currentModal.classList.add('modal__dialog');
-        currentModal.innerHTML = `
+        const newModal = document.createElement('div');
+        newModal.innerHTML = `
         <div class="modal__content">
-                <form action="#">
-                    <div data-close class="modal__close">&times;</div>
-                    <div class="modal__title">${message}</div>
-                </form>
-            </div>
+        <div data-close class="modal__close">&times;</div>
+        <div class="modal__title">${message}</div>
+        </div>
         `;
-        
-        modalWindow.append(currentModal);
+        newModal.classList.add('modal__dialog');
+        modalWindow.append(newModal);
 
         modalOn();
 
-    
-        function thanksModalClose(){
+        function closeThanksModal() {
             prevModal.classList.remove('hide');
-            currentModal.remove();
+            newModal.remove();
             modalOff();
         }
 
         modalWindow.addEventListener('click', (e) => {
-            if(e.target === modalWindow || e.target.getAttribute('data-close') == ''){
-            thanksModalClose();
-            clearTimeout(timeoutThanks);
+            if (e.target.getAttribute('data-close') == '' || e.target === modalWindow) {
+                closeThanksModal();
+                clearTimeout(timeoutModal);
             }
         });
 
-       const timeoutThanks = setTimeout(thanksModalClose, 2000);
+        const timeoutModal = setTimeout(() => {
+            closeThanksModal();
+        }, 4000);
 
     }
 
+
+
     const slides = document.querySelectorAll('.offer__slide'),
-    prevSlide = document.querySelector('.offer__slider-prev'),
-    nextSlide = document.querySelector('.offer__slider-next'),
-    current = document.querySelector('#current'),
-    total = document.querySelector('#total'),
-    slideWrapper = document.querySelector('.offer__slider-wrapper'),
-    slideField = document.querySelector('.offer__slider-inner'),
-    width = window.getComputedStyle(slideWrapper).width;
+        prevSlide = document.querySelector('.offer__slider-prev'),
+        nextSlide = document.querySelector('.offer__slider-next'),
+        current = document.querySelector('#current'),
+        total = document.querySelector('#total'),
+        slideWrapper = document.querySelector('.offer__slider-wrapper'),
+        slideField = document.querySelector('.offer__slider-inner'),
+        width = window.getComputedStyle(slideWrapper).width;
 
     let slideIndex = 1;
     let offset = 0;
 
-    if(slides.length < 10){
+    if (slides.length < 10) {
         total.textContent = `0${slides.length}`;
     } else {
         total.textContent = slides.length;
@@ -291,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showSlides();
 
     function showSlides() {
-        if(slideIndex < 10){
+        if (slideIndex < 10) {
             current.textContent = `0${slideIndex}`;
         } else {
             current.textContent = slideIndex;
@@ -301,31 +299,35 @@ document.addEventListener('DOMContentLoaded', () => {
     function dotsOpacity() {
         dots.forEach(dot => {
             dot.style.opacity = '0.5';
-            dots[slideIndex-1].style.opacity = 1;
+            dots[slideIndex - 1].style.opacity = 1;
         });
+    }
+
+    function numerousWidth() {
+        return +width.replace(/\D/ig, '');
     }
 
     slideField.style.width = 100 * slides.length + '%';
     slideField.style.display = 'flex';
     slideField.style.transition = '0.5s all';
 
-    slideWrapper.style.position = 'relative';
     slideWrapper.style.overflow = 'hidden';
+    slideWrapper.style.position = 'relative';
+
 
     slides.forEach(slide => {
         slide.style.width = width;
     });
 
-    let dots = [];
-    
     const indicators = document.createElement('ol');
     indicators.classList.add('carousel-indicators');
-    slideWrapper.style.position = 'relative';
     slideWrapper.append(indicators);
 
-    for (let i = 0; i < slides.length; i++){
+    let dots = [];
+
+    for (let i = 0; i < slides.length; i++) {
         const dot = document.createElement('li');
-        dot.setAttribute('data-slide-to', i + 1);
+        dot.setAttribute('dots-slide', i + 1);
         dot.classList.add('dot');
         if (i == 0) {
             dot.style.opacity = 1;
@@ -335,16 +337,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     nextSlide.addEventListener('click', () => {
-
-        if(offset === +width.slice(0, width.length - 2) * (slides.length - 1)) {
+        if (offset == numerousWidth() * (slides.length - 1)) {
             offset = 0;
         } else {
-            offset += +width.slice(0, width.length - 2);
+            offset += numerousWidth();
         }
 
         slideField.style.transform = `translateX(-${offset}px)`;
 
-        if(slideIndex == slides.length){
+        if (slideIndex >= slides.length) {
             slideIndex = 1;
         } else {
             slideIndex++;
@@ -356,16 +357,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     prevSlide.addEventListener('click', () => {
-
         if (offset == 0) {
-            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+            offset = numerousWidth() * (slides.length - 1);
         } else {
-            offset -= +width.slice(0, width.length - 2);
+            offset -= numerousWidth();
         }
 
         slideField.style.transform = `translateX(-${offset}px)`;
 
-        if(slideIndex == 1){
+        if (slideIndex <= 1) {
             slideIndex = slides.length;
         } else {
             slideIndex--;
@@ -373,22 +373,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         showSlides();
         dotsOpacity();
-        
+
     });
 
     dots.forEach(dot => {
         dot.addEventListener('click', (e) => {
-            const slideTo = e.target.getAttribute('data-slide-to');
-
+            let slideTo = e.target.getAttribute('dots-slide');
             slideIndex = slideTo;
-            offset = +width.slice(0, width.length - 2) * (slideTo.length - 1);
+            offset = numerousWidth() * (slideIndex - 1);
+
             slideField.style.transform = `translateX(-${offset}px)`;
 
             showSlides();
             dotsOpacity();
+            
         });
     });
-
 
 
 

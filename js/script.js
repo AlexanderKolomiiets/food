@@ -482,10 +482,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     nextSlide.addEventListener('click', () => {
 
-        if (offset === +width.slice(0, width.length - 2) * (slides.length - 1)) { //  width нужно обрезать из-за px в конце
+        if (offset === +width.replace(/\D/ig, '') * (slides.length - 1)) { //  width нужно обрезать из-за px в конце
             offset = 0;
         } else {
-            offset += +width.slice(0, width.length - 2);
+            offset += +width.replace(/\D/ig, '');
         }
 
         slidesField.style.transform = `translateX(-${offset}px)`;
@@ -511,9 +511,9 @@ document.addEventListener('DOMContentLoaded', () => {
     prevSlide.addEventListener('click', () => {
 
         if (offset == 0) { //  width нужно обрезать из-за px в конце
-            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+            offset = +width.replace(/\D/ig, '') * (slides.length - 1);
         } else {
-            offset -= +width.slice(0, width.length - 2);
+            offset -= +width.replace(/\D/ig, '');
         }
 
         slidesField.style.transform = `translateX(-${offset}px)`;
@@ -541,7 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const slideTo = e.target.getAttribute('data-slide-to');
 
             slideIndex = slideTo;
-            offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+            offset = +width.replace(/\D/ig, '') * (slideTo - 1);
 
             slidesField.style.transform = `translateX(-${offset}px)`;
 
@@ -557,5 +557,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
-
 });
+
+
+
+
+
+
+
+
+
