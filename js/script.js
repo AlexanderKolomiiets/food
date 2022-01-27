@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const timeoutModal = setTimeout(() => {
             closeThanksModal();
-        }, 4000);
+        }, 2500);
     }
 
 
