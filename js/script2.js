@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('click', (e) => {
-        if (e.target === modalWindow || e.target.getAttribute('data-close') == '') {
+        if (e.target === modalWindow || e.target.classList.contains('modal__close')) {
             modalOff();
         }
     });
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         modalWindow.addEventListener('click', (e) => {
-            if (e.target.getAttribute('data-close') == '' || e.target === modalWindow) {
+            if (e.target.classList.contains('modal__close')|| e.target === modalWindow) {
                 closeThanksModal();
                 clearTimeout(timeoutModal);
             }

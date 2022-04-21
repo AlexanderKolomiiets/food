@@ -557,6 +557,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
+
+
+    //  CALCULATOR
+
+    //я сос убибу
+
+
 });
 
 
