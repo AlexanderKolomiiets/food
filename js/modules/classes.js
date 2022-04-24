@@ -1,3 +1,5 @@
+import {getResource} from '../services/GET request';
+
 function classes() {
     // CLASSES
     class Menu {
@@ -37,17 +39,6 @@ function classes() {
         }
     }
 
-    // Создание GET-запроса для создания классов
-    const getResource = async (url) => {
-        const res = await fetch(url);
-
-        if (!res.ok) {
-            throw new Error(console.log(`Could not fetch ${url}, status: ${res.status}`));
-        }
-
-        return await res.json();
-    };
-
     getResource('http://localhost:3000/menu')
         .then(data => {
             data.forEach(({
@@ -71,4 +62,4 @@ function classes() {
 
 }
 
-module.exports = classes;
+export default classes;

@@ -9,5 +9,5 @@
 	"browser": true,
 	"devel": true,
 	"jquery": true,
-	"esversion": 6
+	"esversion": 9
 }

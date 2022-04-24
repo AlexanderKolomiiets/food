@@ -1,4 +1,7 @@
-function forms() {
+import {modalOn, modalOff} from './modal';
+import {postData} from '../services/POST request';
+
+function forms(modalTimer) {
     // ФОРМА ОТПРАВКИ ДАННЫХ
 
     const forms = document.querySelectorAll('form');
@@ -8,23 +11,6 @@ function forms() {
         success: 'Спасибо !',
         failure: 'Что-то пошло не так...'
     };
-
-    const postData = async (url, data) => {
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: data
-        });
-
-        if (!res.ok) {
-            throw new Error(console.log(`Could not fetch ${url}, status: ${res.status}`));
-        }
-
-        return await res.json();
-    };
-
 
     forms.forEach(form => {
         form.addEventListener('submit', (e) => {
@@ -58,9 +44,9 @@ function forms() {
             postData('http://localhost:3000/requests', json)
                 .then(data => {
                     console.log(data);
-                    thanksModal(message.success);
+                    showThanksModal(message.success);
                 }).catch(() => {
-                    thanksModal(message.failure);
+                    showThanksModal(message.failure);
                 }).finally(() => {
                     form.reset();
                     statusMessage.remove();
@@ -94,10 +80,12 @@ function forms() {
         });
     });
 
-    function thanksModal(message) {
+    function showThanksModal(message) {
         const prevModalDialog = document.querySelector('.modal__dialog');
 
         prevModalDialog.classList.add('hide');
+
+        modalOn('.modal', modalTimer);
 
         const thanksModal = document.createElement('div');
         thanksModal.classList.add('modal__dialog');
@@ -110,26 +98,15 @@ function forms() {
 
         document.querySelector('.modal').append(thanksModal);
 
-        modalOn();
-
-        function closeThanksModal() {
+        setTimeout(() => {
             thanksModal.remove();
+            prevModalDialog.classList.add('show');
             prevModalDialog.classList.remove('hide');
-            modalOff();
-        }
-
-        modal.addEventListener('click', (e) => {
-            if (e.target.getAttribute('data-close') == '' || e.target === modal) {
-                closeThanksModal();
-                clearTimeout(timeoutModal);
-            }
-        });
-
-        const timeoutModal = setTimeout(() => {
-            closeThanksModal();
+            modalOff('.modal');
         }, 4000);
-    }
+
+    } 
 
 }
 
-module.exports = forms;
+export default forms;

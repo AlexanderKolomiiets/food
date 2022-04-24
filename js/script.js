@@ -1,23 +1,40 @@
+import tabs from './modules/tabs';
+import timer from './modules/timer';
+import modal, { modalOn } from './modules/modal';
+import forms from'./modules/forms';
+import classes from './modules/classes';
+import slider from './modules/slider';
+import calc from './modules/calc';
+ 
 document.addEventListener('DOMContentLoaded', () => {
 
-    const tabs = require('./modules/tabs'),
-    timer = require('./modules/timer'),
-    modal = require('./modules/modal'),
-    forms = require('./modules/forms'),
-    classes = require('./modules/classes'),
-    slider = require('./modules/slider'),
-    calc = require('./modules/calc');
+    const modalTimer = setTimeout(() => modalOn('.modal', modalTimer), 15000); 
 
-    tabs();
-    timer();
-    modal();
-    forms();
+    tabs({
+        tabsSelector : '.tabheader__item',
+        tabsContentSelector : '.tabcontent',
+        tabsParentSelector : '.tabheader__items',
+        activeClass : 'tabheader__item_active'
+    });
+    timer('.timer', '2022-11-11');
+    modal('.modal', '[data-modal]', modalTimer);
+    forms(modalTimer);
     classes();
-    slider();
+    slider({
+        container : '.offer__slider',
+        slide : '.offer__slide',
+        nextArrow : '.offer__slider-next',
+        prevArrow : '.offer__slider-prev',
+        totalCounter : '#total',
+        currentCounter : '#current',
+        wrapper : '.offer__slider-wrapper',
+        field : '.offer__slider-inner'
+    });
     calc();
 
-
 });
+
+import {one} from './modules/tabs'; // пример импорта с табов
 
 
 
