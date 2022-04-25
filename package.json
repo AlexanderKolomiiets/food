@@ -12,11 +12,24 @@
   },
   "author": "",
   "license": "ISC",
+  "browserslist": [
+    ">1%"
+  ],
   "bugs": {
     "url": "https://github.com/AlexanderKolomiiets/food-project/issues"
   },
   "homepage": "https://github.com/AlexanderKolomiiets/food-project#readme",
   "dependencies": {
-    "json-server": "^0.17.0"
+    "@babel/polyfill": "^7.12.1",
+    "es6-promise": "^4.2.8",
+    "json-server": "^0.17.0",
+    "nodelist-foreach-polyfill": "^1.2.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.9",
+    "@babel/preset-env": "^7.16.11",
+    "babel-loader": "^8.2.5",
+    "core-js": "^3.22.2"
   }
 }

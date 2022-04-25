@@ -1,8 +1,8 @@
 function timer(id, deadline) {
     //  TIMER
 
-    function getTimeRemaining(endtime) {
-        const total = Date.parse(endtime) - Date.parse(new Date()),
+    function getTimeRemaining(deadline) {
+        const total = Date.parse(deadline) - Date.parse(new Date()),
             days = Math.floor(total / (1000 * 60 * 60 * 24)),
             hours = Math.floor((total / (1000 * 60 * 60) % 24)),
             minutes = Math.floor((total / (1000 * 60) % 60)),
@@ -25,8 +25,8 @@ function timer(id, deadline) {
         }
     }
 
-    function setClock(selector, endtime) {
-        const timer = document.querySelector(selector),
+    function setClock(id, deadline) {
+        const timer = document.querySelector(id),
             days = timer.querySelector('#days'),
             hours = timer.querySelector('#hours'),
             minutes = timer.querySelector('#minutes'),
@@ -36,7 +36,7 @@ function timer(id, deadline) {
         updateClock();
 
         function updateClock() {
-            const t = getTimeRemaining(endtime);
+            const t = getTimeRemaining(deadline);
 
             days.innerHTML = getZero(t.days);
             hours.innerHTML = getZero(t.hours);
