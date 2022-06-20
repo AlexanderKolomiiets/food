@@ -11,7 +11,7 @@ import calc from './modules/calc';
  
 document.addEventListener('DOMContentLoaded', () => {
 
-    const modalTimer = setTimeout(() => modalOn('.modal', modalTimer), 15000); 
+    const modalTimer = setTimeout(() => modalOn('.modal', modalTimer), 15000); // функцию modalOn нужно превращать в стрелочную, потому что в ней есть аргументы
 
     tabs({
         tabsSelector : '.tabheader__item',

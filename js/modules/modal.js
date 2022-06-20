@@ -23,7 +23,7 @@ function modal(modalSelector, trigger, modalTimer) {
     const btnsOn = document.querySelectorAll(trigger);
 
     btnsOn.forEach(item => {
-        item.addEventListener('click', () => modalOn(modalSelector, modalTimer));
+        item.addEventListener('click', () => modalOn(modalSelector, modalTimer)); // функцию modalOn нужно превращать в стрелочную, потому что в ней есть аргументы
     });
 
     modal.addEventListener('click', (e) => { // убрать окно нажав мимо него
