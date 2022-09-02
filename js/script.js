@@ -37,9 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-import {one} from './modules/tabs'; // пример импорта с табов
-
-
 
 
 

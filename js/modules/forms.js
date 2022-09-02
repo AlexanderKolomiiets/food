@@ -7,7 +7,7 @@ function forms(modalTimer) {
     const forms = document.querySelectorAll('form');
 
     const message = {
-        loading: '/icons/spinner.svg',
+        loading: '../../icons/spinner.svg',
         success: 'Спасибо !',
         failure: 'Что-то пошло не так...'
     };
@@ -22,21 +22,9 @@ function forms(modalTimer) {
                     display: block;
                     margin: 0 auto;
                     `;
-            // form.append(statusMessage);
             form.insertAdjacentElement('afterend', statusMessage);
 
             const formData = new FormData(form);
-
-            // 1 метод создания обьекта json
-
-            // const obj = {};
-            // formData.forEach((value, key) => {
-            //     obj[key] = value;
-            // });
-            // const json = JSON.stringify(obj);
-
-            // 2 метод создания обьекта json
-
             const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
             //   Запрос через Fetch API
@@ -51,32 +39,6 @@ function forms(modalTimer) {
                     form.reset();
                     statusMessage.remove();
                 });
-
-            //  Запрос через XMLHttpRequest
-
-            // const request = new XMLHttpRequest();
-
-            // request.open('POST', 'server.php');
-            // request.setRequestHeader('Content-type', 'application/json');
-            // request.send(json);
-
-            // request.addEventListener('load', () => {
-            //     if (request.status === 200) {
-            //         console.log(request.response);
-            //         thanksModal(message.success);
-            //     } else {
-            //         thanksModal(message.failure);
-            //     }
-            // });
-            //         form.reset();
-            //         statusMessage.remove();
-
-            // npx json-server db.json
-
-            // fetch('http://localhost:3000/menu')
-            // .then(data => data.text())
-            // .then(data => console.log(data));
-
         });
     });
 

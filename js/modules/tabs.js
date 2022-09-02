@@ -26,25 +26,6 @@ function tabs({tabsSelector, tabsContentSelector, tabsParentSelector, activeClas
     hideTabsContent();
     showTabContent();
 
-    // i = 0  // нужно чтобы поставить дефолтное значение
-
-    // 2 решения
-
-    tabsParent.addEventListener('click', (e) => {
-        const target = e.target;
-        if (target && target.classList.contains(tabsSelector.slice(1))) {
-
-            tabs.forEach((item, i) => {
-                if (target == item) {
-                    hideTabsContent();
-                    showTabContent(i);
-                }
-            });
-
-        }
-
-    });
-
     tabs.forEach((item, i) => {
         item.addEventListener('click', () => {
             hideTabsContent();
@@ -53,9 +34,4 @@ function tabs({tabsSelector, tabsContentSelector, tabsParentSelector, activeClas
     });
 }
 
-export default tabs;   // пример дефолтного експорта
-
-// let one = 1;
-// export {one};
-
-// export default нужен для експорта только одного выражения
+export default tabs;

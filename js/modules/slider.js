@@ -55,7 +55,7 @@ function slider({container, slide, nextArrow, prevArrow, totalCounter, currentCo
 
     nextSlide.addEventListener('click', () => {
 
-        if (offset === +width.replace(/\D/ig, '') * (slides.length - 1)) { //  width нужно обрезать из-за px в конце
+        if (offset === +width.replace(/\D/ig, '') * (slides.length - 1)) {
             offset = 0;
         } else {
             offset += +width.replace(/\D/ig, '');
@@ -83,7 +83,7 @@ function slider({container, slide, nextArrow, prevArrow, totalCounter, currentCo
 
     prevSlide.addEventListener('click', () => {
 
-        if (offset == 0) { //  width нужно обрезать из-за px в конце
+        if (offset == 0) {
             offset = +width.replace(/\D/ig, '') * (slides.length - 1);
         } else {
             offset -= +width.replace(/\D/ig, '');

@@ -24,52 +24,5 @@
       "price": 21,
       "parentSelector": ".menu .container"
     }
-  ],
-  "requests": [
-    {
-      "name": "OsamaBinHustlin",
-      "phone": "23",
-      "id": 1
-    },
-    {
-      "name": "Alexander",
-      "phone": "32",
-      "id": 2
-    },
-    {
-      "name": "fdf",
-      "phone": "32",
-      "id": 3
-    },
-    {
-      "name": "s",
-      "phone": "543",
-      "id": 4
-    },
-    {
-      "name": "Alexander",
-      "phone": "32",
-      "id": 5
-    },
-    {
-      "name": "Alexander",
-      "phone": "32",
-      "id": 6
-    },
-    {
-      "name": "OsamaBinHustlin",
-      "phone": "32",
-      "id": 7
-    },
-    {
-      "name": "fdf",
-      "phone": "32",
-      "id": 8
-    },
-    {
-      "name": "Alexander",
-      "phone": "ds",
-      "id": 9
-    }
   ]
 }

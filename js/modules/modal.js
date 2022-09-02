@@ -23,10 +23,10 @@ function modal(modalSelector, trigger, modalTimer) {
     const btnsOn = document.querySelectorAll(trigger);
 
     btnsOn.forEach(item => {
-        item.addEventListener('click', () => modalOn(modalSelector, modalTimer)); // функцию modalOn нужно превращать в стрелочную, потому что в ней есть аргументы
+        item.addEventListener('click', () => modalOn(modalSelector, modalTimer));
     });
 
-    modal.addEventListener('click', (e) => { // убрать окно нажав мимо него
+    modal.addEventListener('click', (e) => {
 
         if (e.target === modal || e.target.getAttribute('data-close') == '') {
 
@@ -35,9 +35,9 @@ function modal(modalSelector, trigger, modalTimer) {
         }
     });
 
-    document.addEventListener('keydown', (e) => { // убрать нажав Esc (keydown)
+    document.addEventListener('keydown', (e) => {
 
-        if (e.code === 'Escape' && modal.classList.contains('show')) { // e.code для обозначения конкретной клавиши
+        if (e.code === 'Escape' && modal.classList.contains('show')) {
 
             modalOff(modalSelector);
 

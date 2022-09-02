@@ -1,2 +1,2 @@
 # food-project
-- [Preview](https://AlexanderKolomiiets.github.io/food/)
+[PREVIEW](https://AlexanderKolomiiets.github.io/food/)
