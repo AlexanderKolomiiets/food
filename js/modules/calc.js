@@ -29,7 +29,6 @@ function calc() {
             if (elem.getAttribute('data-ratio') === localStorage.getItem('ratio')) {
                 elem.classList.add(activeClass);
             }
-
         });
     }
 
