@@ -7,7 +7,6 @@ function forms(modalTimer) {
     const forms = document.querySelectorAll('form');
 
     const message = {
-        loading: '../../icons/spinner.svg',
         success: 'Спасибо !',
         failure: 'Что-то пошло не так...'
     };
@@ -16,11 +15,12 @@ function forms(modalTimer) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const statusMessage = document.createElement('img');
-            statusMessage.src = message.loading;
+            const statusMessage = document.createElement('p');
+            statusMessage.textContent = 'Wait a few...'
             statusMessage.style.cssText = `
-                    display: block;
-                    margin: 0 auto;
+                    display: flex;
+                    justify-content: center;
+                    margin-top: 20px;
                     `;
             form.insertAdjacentElement('afterend', statusMessage);
 
@@ -66,9 +66,7 @@ function forms(modalTimer) {
             prevModalDialog.classList.remove('hide');
             modalOff('.modal');
         }, 4000);
-
     } 
-
 }
 
 export default forms;

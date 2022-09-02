@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     tabs({
         tabsSelector : '.tabheader__item',
         tabsContentSelector : '.tabcontent',
-        tabsParentSelector : '.tabheader__items',
         activeClass : 'tabheader__item_active'
     });
     timer('.timer', '2022-11-11');
@@ -24,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     forms(modalTimer);
     classes();
     slider({
-        container : '.offer__slider',
         slide : '.offer__slide',
         nextArrow : '.offer__slider-next',
         prevArrow : '.offer__slider-prev',
