@@ -36,7 +36,6 @@ function calc() {
     initLocal('#gender div', 'calculating__choose-item_active');
     initLocal('.calculating__choose_big div', 'calculating__choose-item_active');
 
-
     function calcTotal() {
         if (!sex || !height || !weight || !age || !ratio) {
             result.textContent = '___';
