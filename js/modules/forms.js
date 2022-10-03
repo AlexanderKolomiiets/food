@@ -7,29 +7,31 @@ function forms(modalTimer) {
     const forms = document.querySelectorAll('form');
 
     const message = {
-        success: 'Спасибо !',
-        failure: 'Что-то пошло не так...'
-    };
+      loading: '/icons/spinner.svg',
+      success: 'Спасибо !',
+      failure: 'Что-то пошло не так...'
+  };
 
-    forms.forEach(form => {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
+  forms.forEach(form => {
+      form.addEventListener('submit', (e) => {
+          e.preventDefault();
 
-            const statusMessage = document.createElement('p');
-            statusMessage.textContent = 'Wait a few...'
-            statusMessage.style.cssText = `
-                    display: flex;
-                    justify-content: center;
-                    margin-top: 20px;
-                    `;
-            form.insertAdjacentElement('afterend', statusMessage);
+          const statusMessage = document.createElement('img');
+          statusMessage.src = message.loading;
+          statusMessage.style.cssText = `
+                  display: block;
+                  margin: 0 auto;
+                  `;
+          // form.append(statusMessage);
+          form.insertAdjacentElement('afterend', statusMessage);
+
 
             const formData = new FormData(form);
             const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
             //   Запрос через Fetch API
 
-            postData('http://localhost:3000/requests', json)
+            postData('https://mate-academy.github.io/fe-students-api', json)
                 .then(data => {
                     console.log(data);
                     showThanksModal(message.success);
