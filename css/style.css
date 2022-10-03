@@ -206,6 +206,12 @@ animation-duration: 0.7s;
     width: 100%
 }
 
+@media (max-width: 1500px) {
+  .sidepanel {
+    display: none;
+  }
+}
+
 .preview {
     padding: 28px 0 100px 0;
     position: relative
