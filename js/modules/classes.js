@@ -1,7 +1,6 @@
 import {getResource} from '../services/GET request';
 
 function classes() {
-    // CLASSES
     class Menu {
         constructor(img, altimg, title, descr, price, parentSelector, ...classes) {
             this.img = img;

@@ -2,8 +2,6 @@ import {modalOn, modalOff} from './modal';
 import {postData} from '../services/POST request';
 
 function forms(modalTimer) {
-    // ФОРМА ОТПРАВКИ ДАННЫХ
-
     const forms = document.querySelectorAll('form');
 
     const message = {
@@ -22,14 +20,11 @@ function forms(modalTimer) {
                   display: block;
                   margin: 0 auto;
                   `;
-          // form.append(statusMessage);
           form.insertAdjacentElement('afterend', statusMessage);
 
 
             const formData = new FormData(form);
             const json = JSON.stringify(Object.fromEntries(formData.entries()));
-
-            //   Запрос через Fetch API
 
             postData('https://mate-academy.github.io/fe-students-api', json)
                 .then(data => {

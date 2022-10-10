@@ -1,4 +1,3 @@
-// Создание GET-запроса для создания классов
 const getResource = async (url) => {
     const res = await fetch(url);
         if (!res.ok) {

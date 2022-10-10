@@ -17,8 +17,6 @@ function modalOff(modalSelector) {
 }
 
 function modal(modalSelector, trigger, modalTimer) {
-    // MODAL WINDOW 
-
     const modal = document.querySelector(modalSelector);
     const btnsOn = document.querySelectorAll(trigger);
 

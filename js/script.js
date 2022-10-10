@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tabsContentSelector : '.tabcontent',
         activeClass : 'tabheader__item_active'
     });
-    timer('.timer', '2022-11-11');
+    timer('.timer', '2023-02-10');
     modal('.modal', '[data-modal]', modalTimer);
     forms(modalTimer);
     classes();
